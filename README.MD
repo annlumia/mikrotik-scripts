@@ -1,0 +1,3 @@
+# Kumpulan skrip mikrotik
+
+
