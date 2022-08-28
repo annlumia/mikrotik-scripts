@@ -1,0 +1,39 @@
+:local f1 (35*1073741824)
+:local f2 (40*1073741824)
+:local f3 (50*1073741824)
+:local f4 (90*1073741824)
+
+:local normal60 2M
+:local s1 2000k
+:local s2 1500k
+:local s3 1M
+:local s4 512k
+
+/ip hotspot user {
+   :foreach u in=[find] do={
+      :local used ([get $u bytes-out] + [get $u bytes-in])
+      :local akun [get $u name]
+      :if ( $used > $f4 ) do={
+          /queue tree set [ find name="60-$akun-dn" ]  limit-at=$s4 max-limit=$s4
+          /queue tree set [ find name="60-$akun-up" ]  limit-at=$s4 max-limit=$s4 
+      } else={
+          :if ( $used > $f3 ) do={ 
+             /queue tree set [ find name="60-$akun-dn" ]  limit-at=$s3 max-limit=$s3
+             /queue tree set [ find name="60-$akun-up" ]  limit-at=$s3 max-limit=$s3
+          } else={            
+            :if ( $used > $f2 ) do={
+                /queue tree set [ find name="60-$akun-dn" ]  limit-at=$s2 max-limit=$s2 
+                /queue tree set [ find name="60-$akun-up" ]  limit-at=$s2 max-limit=$s2 
+            } else={        
+              :if ( $used > $f1 ) do={
+                  /queue tree set [ find name="60-$akun-dn" ]  limit-at=$s1 max-limit=$s1
+                  /queue tree set [ find name="60-$akun-up" ]  limit-at=$s1 max-limit=$s1
+              } else={
+                  /queue tree set [ find name="60-$akun-dn" ]  limit-at=$normal60 max-limit=$normal60
+                  /queue tree set [ find name="60-$akun-up" ]  limit-at=$normal60 max-limit=$normal60
+              }
+            }
+          }
+      }
+   }
+}
